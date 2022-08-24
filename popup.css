@@ -1,0 +1,13 @@
+body, html {
+  padding: 0;
+  margin: 0
+}
+.popup {
+  width: 500px;
+  background-color: #fff;
+  height: 1000px;
+}
+
+.popup textarea {
+  width: 90%;
+}
