@@ -28,17 +28,23 @@ function main() {
 
 /** 注册全局变量 */
 const registerGlobal = () => {
+
     /** 默认配置 */
-    const apiConfig = {
+    const defaultConfig = {
         "isNeedType": false,
         "isNeedAxiosType": false,
-        "isNeedSecondType": false,
-        "dataParseName": "",
+        "dataParseName": "detailMsg",
         "outputStyle": "nameExport",
-        "axiosName": "fetch"
+        "axiosName": "fetch",
+        "basepath": "",
+        "customParams": []
     }
-    const { host, protocol } = window.location
-    window.global = { apiConfig: Object.assign({}, apiConfig, { host, protocol }) }
+    chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
+        const { host, protocol } = window.location
+        const config = apiConfig || defaultConfig
+        window.global = { apiConfig: Object.assign({}, config, { host, protocol }) }
+    })
+
 }
 
 /** 获取服务名 */
@@ -46,6 +52,7 @@ const getServiceName = () => {
     const { href, host, protocol } = location
     const [, projectId] = menuRegex.exec(location.href)
     if (!projectId) return Promise.resolve('')
+    if (global.apiConfig.basepath) return Promise.resolve(global.apiConfig.basepath)
     return new Promise(async (resolve, reject) => {
         const serviceName = localStorage.getItem(`serviceName_${projectId}`)
         if (serviceName) resolve(serviceName)

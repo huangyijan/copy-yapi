@@ -6,11 +6,7 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["storage", "activeTab", "scripting", "tabs", "management", "storage", "cookies"],
-  "host_permissions": [
-    "*://*.miguatech.com/*",
-    "http://yapi.miguatech.com/*"
-  ],
+  "permissions": ["storage", "activeTab", "scripting", "tabs", "management", "storage"],
   "content_scripts": [
     {
       "matches": ["*://*/*"],
