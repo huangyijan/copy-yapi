@@ -4,7 +4,6 @@ body, html {
 .popup {
   width: 500px;
   background-color: #fff;
-  height: 1000px;
 }
 
 #submit {

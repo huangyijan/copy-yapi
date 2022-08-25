@@ -4,7 +4,7 @@
   "version": "1.0",
   "manifest_version": 3,
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "copy/background.js"
   },
   "permissions": ["storage", "activeTab", "scripting", "tabs", "management", "storage"],
   "content_scripts": [
@@ -15,7 +15,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["aomi-yapi.js", "prettier.mjs", "ts.mjs"],
+    "resources": ["copy/aomi-yapi.js", "copy/prettier.mjs", "copy/ts.mjs"],
     "matches": ["*://*/*"]
   }],
   "action": {

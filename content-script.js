@@ -63,7 +63,7 @@ const getServiceName = () => {
     const [, projectId] = menuRegex.exec(href)
     if (!projectId) return Promise.resolve('')
     if (global.apiConfig.basepath) return Promise.resolve(global.apiConfig.basepath)
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
         const serviceName = localStorage.getItem(`serviceName_${projectId}`)
         if (serviceName) resolve(serviceName)
         const res = await fetch(`${protocol}//${host}/api/project/get?id=${projectId}`)
@@ -76,7 +76,7 @@ const getServiceName = () => {
 /** 监听按钮点击 */
 async function buttonClickListen() {
     registerGlobal()
-    const src = chrome.runtime.getURL("aomi-yapi.js");
+    const src = chrome.runtime.getURL("copy/aomi-yapi.js");
     const { JsApiItem, TsApiItem } = await import(src);
     const copyJsButton = document.getElementById("copyJs");
     const copyTsButton = document.getElementById("copyTs");
@@ -168,8 +168,8 @@ async function orangeCopyText(item) {
 
 /** 格式化代码 */
 async function format(text) {
-    const src = chrome.runtime.getURL("prettier.mjs");
-    const TsSrc = chrome.runtime.getURL("ts.mjs");
+    const src = chrome.runtime.getURL("copy/prettier.mjs");
+    const TsSrc = chrome.runtime.getURL("copy/ts.mjs");
     const prettier = await import(src)
     const TsPlugin = await import(TsSrc)
     return prettier.default.format(text, {
