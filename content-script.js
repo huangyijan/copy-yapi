@@ -19,14 +19,20 @@ function main() {
     const tsButton = getCopyButton('copyTs', '复制Ts代码')
     const tsRequestButton = getCopyButton('copyTsRequest', '复制Ts请求声明')
     const tsResponseButton = getCopyButton('copyTsResponse', '复制Ts回调声明')
-    const titles = document.body.getElementsByClassName("interface-title")
-    if (titles.length && projectRegex.test(location.href)) {
-        const title = titles?.[0]
-        title.appendChild(jsButton)
-        title.appendChild(tsButton)
-        title.appendChild(tsRequestButton)
-        title.appendChild(tsResponseButton)
-        buttonClickListen()
+    if (projectRegex.test(location.href)) {
+        const titles = document.body.getElementsByClassName("interface-title")
+        if (titles.length) {
+            const title = titles?.[0]
+            title.appendChild(jsButton)
+            title.appendChild(tsButton)
+            title.appendChild(tsRequestButton)
+            title.appendChild(tsResponseButton)
+            buttonClickListen()
+        } else {
+            setTimeout(() => {
+                main()
+            }, 1000);
+        }
     }
 }
 
@@ -62,7 +68,7 @@ const getServiceName = () => {
         if (serviceName) resolve(serviceName)
         const res = await fetch(`${protocol}//${host}/api/project/get?id=${projectId}`)
         const { data, errcode } = await res.json()
-        if (errcode || !data.basepath) reject('请求失败')
+        if (errcode || !data.basepath) resolve("")
         localStorage.setItem(`serviceName_${projectId}`, data.basepath)
         resolve(data.basepath)
     })
@@ -123,7 +129,7 @@ async function buttonClickListen() {
                 await copyToClipboard(copyText)
                 copyTsResponseButton.innerText = '复制回调成功'
             } else {
-                copyTsResponseButton.innerText = '请求无返回'
+                copyTsResponseButton.innerText = '请求返回无法解析'
             }
         } catch (error) {
             alert(String(error))
@@ -178,6 +184,7 @@ async function format(text) {
 
 /** 复制文本到粘贴板 */
 function copyToClipboard(textToCopy) {
+    showCode(textToCopy)
     if (navigator.clipboard && window.isSecureContext) {
         return navigator.clipboard.writeText(textToCopy)
     } else {
@@ -196,12 +203,32 @@ function copyToClipboard(textToCopy) {
     }
 }
 
+function showCode(code = '') {
+    const codeIdDom = document.querySelector('#codeWrap')
+    if (codeIdDom) return codeIdDom.innerText = code
+    const padDom = document.querySelector('.panel-view')
+    const childDom = document.querySelector('.ant-row')
+    const codeWrap = document.createElement('div')
+    const preDom = document.createElement('pre')
+    const codeDom = document.createElement('code')
+    codeWrap.setAttribute('class', 'tui-editor-contents')
+    codeWrap.setAttribute('style', 'margin: 0px; padding: 0px 20px; float: none;')
+    codeDom.setAttribute('id', 'codeWrap')
+    codeDom.innerText = code
+    preDom.appendChild(codeDom)
+    codeWrap.appendChild(preDom)
+    padDom.insertBefore(codeWrap, childDom)
+}
 
-setTimeout(() => {
-    main()
-}, 1000);
 
-chrome.runtime.onMessage.addListener((request, sender, reply) => {
+
+document.onreadystatechange = () => {
+    if (document.readyState === 'complete') {
+        main()
+    }
+}
+
+chrome.runtime.onMessage.addListener((request) => {
     if (request.message === 'urlChange') {
         main()
     }

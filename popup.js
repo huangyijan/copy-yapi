@@ -13,6 +13,7 @@ let editor = null
 /** 初始化表单 */
 function init(apiConfig) {
   if (apiConfig) Object.assign(defaultConfig, apiConfig)
+  console.log(defaultConfig);
   JSONEditor.defaults.theme = 'spectre';
   JSONEditor.defaults.iconlib = 'spectre';
   editor = new JSONEditor(document.getElementById('editor_config'), {
@@ -75,14 +76,11 @@ function init(apiConfig) {
 }
 
 chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
-  if (apiConfig) init(apiConfig ? apiConfig : undefined)
+ init(apiConfig ? apiConfig : undefined)
 })
 
 const submitButton = document.getElementById('submit')
-// Hook up the submit button to log to the console
 submitButton.addEventListener('click', function () {
-  // Get the value from the editor
-  console.log(editor.getValue());
   const apiConfig = editor.getValue()
   chrome.storage.sync.set({ apiConfig }, async function () {
     submitButton.innerText = '保存成功，刷新当前页面使配置生效'

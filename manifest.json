@@ -9,8 +9,9 @@
   "permissions": ["storage", "activeTab", "scripting", "tabs", "management", "storage"],
   "content_scripts": [
     {
-      "matches": ["*://*/*"],
-      "js": ["content-script.js"]
+      "matches": ["*://yapi.miguatech.com/*"],
+      "js": ["content-script.js"],
+      "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [{
