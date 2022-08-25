@@ -1,5 +1,3 @@
-// import prettier from 'prettier';
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -39,8 +37,6 @@ var pathHasParamsRegex = /\/\{([a-zA-Z0-9]*)\}/g; // 獲取接口参数名稱
 var NormalType = ['boolean', 'string', 'number', 'object', 'array'];
 var quotaRegex = /(,)\s*\n*.*\}/g; // 匹配json字符串最后一个逗号
 var illegalJsonRegex = /(\/\/\s.*)\n/g; // 非法json注释匹配
-var axiosType = 'import type { AxiosRequestConfig } from \'aomi-yapi-convert\'';
-var jsdocAxiosType = "/**\n  * @typedef { import(\"aomi-yapi-convert\").AxiosRequestConfig } AxiosRequestConfig\n  */";
 /** 兼容简写与全写 */
 var Versions = {
     typescript: "ts" /* TS */,
@@ -48,17 +44,7 @@ var Versions = {
     javascript: "js" /* JS */,
     js: "js" /* JS */
 };
-var prettierDefaultOption = {
-    parser: 'typescript',
-    semi: false,
-    printWidth: 150,
-    tabWidth: 4
-};
 
-/** 将下划线和短横线命名的重命名为驼峰命名法 */
-var toHumpName = function (str) {
-    return str.replace(ApiNameRegex, function (_keb, item) { return item.toUpperCase(); });
-};
 /** hasOwnProperty太长了，写一个代理当简写 */
 var hasProperty = function (obj, key) {
     if (!obj)
@@ -277,11 +263,6 @@ var getSuitableJsdocProperty = function (key, type, description, example) {
 };
 var getSuitableTsInterface = function (noteName, noteStr, childNote) { return "export interface ".concat(noteName, " {\n").concat(noteStr, "}\n").concat(childNote || ''); };
 var getSuitableJsdocType = function (noteName, noteStr, childNote) { return "/** \n  * @typedef ".concat(noteName, "\n").concat(noteStr, "  */\n").concat(childNote || ''); };
-/** 字符串拼接，缩进处理 */
-var format = function (lines) {
-    var codeString = lines.join('\n');
-    return codeString
-};
 /** 获取Ts类型Str */
 var getTsTypeStr = function (data) {
     /** Ts数据机构处理json schema 数据结构, 由于存在内部调用，所以就写成了内部函数 */
@@ -339,36 +320,6 @@ var dealJsonSchemaArr = function (data, types, typeName) {
     if (bodyStr.length)
         types.unshift({ typeName: typeName, typeString: bodyStr });
 };
-
-/** 通用api对象的抽象类 */
-var ApiItem = /** @class */ (function () {
-    function ApiItem(apiItem, project) {
-        this.apiItem = apiItem;
-        this.project = project;
-        this.paramsArr = [];
-        this.methodStr = '';
-        this.methodNote = '';
-        this.returnData = { name: 'response' };
-    }
-    return ApiItem;
-}());
-/** 文件对象的抽象类 */
-var FileItem = /** @class */ (function () {
-    function FileItem(project, menuItem) {
-        var _a;
-        this.fileName = '';
-        this.savePath = '';
-        this.fileHeader = [];
-        this.apiContent = [];
-        this.fileFoot = [];
-        this.project = project;
-        this.menuItem = menuItem;
-        if (menuItem.list.length) {
-            this.fileConfig = (_a = this.project.group) === null || _a === void 0 ? void 0 : _a.find(function (menu) { return menu.catId == menuItem.list[0].catid; });
-        }
-    }
-    return FileItem;
-}());
 
 /** 获取请求参数（params）传输参数，考虑到params一律是传地址栏，所以type默认设置为string */
 var getConfigNoteParams$1 = function (reqQuery, requestName) {
@@ -443,12 +394,19 @@ var getAxiosOptionTypeName = function () {
     var axiosTypeName = isNeedAxiosType ? 'AxiosRequestConfig' : 'any';
     return axiosTypeName;
 };
-/** 获取头部jsdoc描述信息 */
-var getFileJsdocInfo = function (item) {
-    var menuItem = item.list.find(function (item) { return !!item; });
-    var menuLink = menuItem ? getApiLinkAddress(menuItem.project_id, "cat_".concat(menuItem.catid)) : '';
-    return "/**\n * @description ".concat(item.name, "\n * @file \u8BE5\u6587\u4EF6\u7531aomi-yapi-convert\u81EA\u52A8\u751F\u6210\uFF0C\u8BF7\u4E0D\u8981\u624B\u52A8\u6539\u52A8\u8FD9\u4E2A\u6587\u4EF6, \u53EF\u80FD\u4F1A\u88AB\u63D2\u4EF6\u66F4\u65B0\u8986\u76D6\n * @docUpdateTime ").concat(new Date().toLocaleDateString(), "\n * @link ").concat(menuLink, "\n */");
-};
+
+/** 通用api对象的抽象类 */
+var ApiItem = /** @class */ (function () {
+    function ApiItem(apiItem, project) {
+        this.apiItem = apiItem;
+        this.project = project;
+        this.paramsArr = [];
+        this.methodStr = '';
+        this.methodNote = '';
+        this.returnData = { name: 'response' };
+    }
+    return ApiItem;
+}());
 
 /** 如果在解析不出来interface类型的情况下返回any类型容错 */
 var getTypeName = function (interfaceName, body, typeString) {
@@ -708,7 +666,7 @@ var TsApiItem = /** @class */ (function (_super) {
     };
     TsApiItem.prototype.setMethodNote = function () {
         var item = this.apiItem;
-        this.methodNote = "/**\n * @description ".concat(item.title, "\n * @apiUpdateTime ").concat(getUpdateTime(item.up_time), "\n * @link ").concat(getApiLinkAddress(item.project_id, item._id), "\n */");
+        this.methodNote = "/**\n        * @description ".concat(item.title, "\n        * @apiUpdateTime ").concat(getUpdateTime(item.up_time), "\n        * @link ").concat(getApiLinkAddress(item.project_id, item._id), "\n        */");
     };
     TsApiItem.prototype.setMethodStr = function () {
         var item = this.apiItem;
@@ -723,133 +681,4 @@ var TsApiItem = /** @class */ (function (_super) {
     return TsApiItem;
 }(ApiItem));
 
-/** 获取合法可以被处理的接口path，有些接口可能不是很常规，这里处理异常情况 */
-var getValidApiPath = function (path) {
-    if (path.includes('?'))
-        path = path.split('?')[0];
-    if (path.endsWith('/'))
-        path = path.slice(0, path.length - 1);
-    return path;
-};
-var CommonFileItem = /** @class */ (function (_super) {
-    __extends(CommonFileItem, _super);
-    function CommonFileItem(project, menu, hasSaveNames) {
-        var _this = _super.call(this, project, menu) || this;
-        _this.config = global.apiConfig;
-        /** 已经取名的文件名 */
-        _this.hasSaveNames = [];
-        /** 存储文件名的容器 */
-        _this.fileNameSet = {};
-        _this.hasSaveNames = hasSaveNames;
-        _this.setFileHeader();
-        _this.dealExportDefault();
-        _this.setApiContent();
-        _this.setFileName();
-        _this.setSavePath();
-        return _this;
-    }
-    CommonFileItem.prototype.setFileName = function () {
-        var _this = this;
-        var list = this.menuItem.list;
-        list.forEach(function (api) {
-            _this.setFileNameTimes(api.path);
-        });
-        // 文件名取名策略：获取路径上名字出现最多词的路径名称，需要将一些短横线下划线转为驼峰命名法
-        var FileName = this.getMaxTimesObjectKeyName();
-        this.fileName = FileName;
-        this.hasSaveNames.push(FileName);
-    };
-    /** 每个接口对象都统计一下出现次数 */
-    CommonFileItem.prototype.setFileNameTimes = function (path) {
-        var _this = this;
-        path = path.replace(/\/{.+}/g, '');
-        path = path.substring(1, path.length);
-        var words = path.split('/');
-        words.forEach(function (word) {
-            word = toHumpName(word);
-            word = word.replace(/^([A-Z])/, function (_, item) { return item.toLowerCase(); }); // 转下首字母小写
-            _this.fileNameSet[word] ? _this.fileNameSet[word]++ : _this.fileNameSet[word] = 1;
-        });
-    };
-    /** 获取独一的文件名称，如果名称都被用过了就用common文件做为文件名，这里可能会有多个common：TODO */
-    CommonFileItem.prototype.getMaxTimesObjectKeyName = function () {
-        var _this = this;
-        var obj = this.fileNameSet;
-        var sortKeyByTimes = Object.keys(obj).sort(function (key1, key2) { return obj[key2] - obj[key1]; });
-        var uinFileName = sortKeyByTimes.find(function (key) { return !_this.hasSaveNames.includes(key); }) || 'common';
-        return uinFileName;
-    };
-    CommonFileItem.prototype.setSavePath = function () {
-        var fileName = this.fileName;
-        var dir = this.project.outputDir;
-        var fileConfig = this.fileConfig;
-        // 判断用户是否有自定义配置，如果有取配置文件的。（TODO:用户配置不当可能会导致出错）
-        if (fileConfig && hasProperty(fileConfig, 'fileName') && fileConfig.fileName)
-            fileName = fileConfig.fileName;
-        if (fileConfig && hasProperty(fileConfig, 'outputDir') && fileConfig.outputDir)
-            dir = fileConfig.outputDir;
-        var version = this.config.version;
-        var path = "".concat(dir, "/").concat(fileName, ".").concat(version);
-        this.savePath = path;
-    };
-    /** 设置单个文件的文件头部信息 */
-    CommonFileItem.prototype.setFileHeader = function () {
-        var _this = this;
-        var _a;
-        this.fileHeader.push(getFileJsdocInfo(this.menuItem));
-        if (Array.isArray(this.config.customerSnippet))
-            this.config.customerSnippet.forEach(function (str) { return _this.fileHeader.push(str); });
-        if (Versions[this.config.version] === "ts" /* TS */) {
-            this.config.isNeedType && this.config.isNeedAxiosType && this.fileHeader.push(axiosType);
-        }
-        if ((_a = this.config) === null || _a === void 0 ? void 0 : _a.axiosFrom)
-            this.fileHeader.push(this.config.axiosFrom);
-        this.fileHeader.push('');
-    };
-    CommonFileItem.prototype.setApiContent = function () {
-        var _this = this;
-        var list = this.menuItem.list;
-        list.forEach(function (item) {
-            if (_this.project.hideUnDoneApi && item.status === 'undone')
-                return;
-            item.path = getValidApiPath(item.path); // 处理一些后台在地址栏上加参数的问题
-            var apiItem = Versions[_this.config.version] === "ts" /* TS */ ? new TsApiItem(item, _this.project) : new JsApiItem(item, _this.project);
-            _this.apiContent.push(apiItem);
-        });
-    };
-    CommonFileItem.prototype.setFileFoot = function () {
-        if (Versions[this.config.version] === "js" /* JS */ && this.config.isNeedType) {
-            this.fileFoot.push(jsdocAxiosType);
-        }
-    };
-    /** 导出形式为默认的时候需要将整个对象包裹起来 */
-    CommonFileItem.prototype.dealExportDefault = function () {
-        if (this.config.outputStyle === "defaultExport" /* Default */) {
-            this.fileHeader.push('export default {');
-            this.fileFoot.push('}\n');
-        }
-    };
-    CommonFileItem.prototype.getFileCode = function () {
-        var _this = this;
-        if (!this.apiContent.length)
-            return '';
-        var mainContentStr = [];
-        this.apiContent.forEach(function (apiItem) {
-            mainContentStr.push(apiItem.methodNote);
-            mainContentStr.push(apiItem.methodStr);
-            if (!_this.config.isNeedType)
-                return;
-            apiItem.paramsArr.forEach(function (item) {
-                if (item.typeString)
-                    _this.fileFoot.push(item.typeString);
-            });
-            if (apiItem.returnData.typeString)
-                _this.fileFoot.push(apiItem.returnData.typeString);
-        });
-        this.setFileFoot();
-        return format(this.fileHeader.concat(mainContentStr, this.fileFoot));
-    };
-    return CommonFileItem;
-}(FileItem));
-
-export { CommonFileItem, JsApiItem, TsApiItem, CommonFileItem as default };
+export { JsApiItem, TsApiItem };

@@ -14,7 +14,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["aomi-yapi.js"],
+    "resources": ["aomi-yapi.js", "prettier.mjs", "ts.mjs"],
     "matches": ["*://*/*"]
   }],
   "action": {

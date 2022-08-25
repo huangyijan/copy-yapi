@@ -13,6 +13,8 @@ let editor = null
 /** 初始化表单 */
 function init(apiConfig) {
   if (apiConfig) Object.assign(defaultConfig, apiConfig)
+  JSONEditor.defaults.theme = 'spectre';
+  JSONEditor.defaults.iconlib = 'spectre';
   editor = new JSONEditor(document.getElementById('editor_config'), {
     disable_collapse: true,
     disable_properties: true,
@@ -23,10 +25,12 @@ function init(apiConfig) {
         isNeedType: {
           title: "isNeedType-是否需要参数类型补充",
           type: "boolean",
+          format: "checkbox"
         },
         isNeedAxiosType: {
           title: "isNeedAxiosType-是否需要Axios参数类型补充",
           type: "boolean",
+          format: "checkbox"
         },
         axiosName: {
           title: "axiosName-请求的fetch 名称",
@@ -40,7 +44,7 @@ function init(apiConfig) {
           type: "string",
           format: "radio",
           title: "文件导出类型，推荐具名导出",
-          enum: ["nameExport", "defaultExport", "anonymousExport"]
+          enum: ["nameExport", "anonymousExport", "defaultExport"]
         },
         basepath: {
           title: "basepath-服务名，如果服务端忘记配置该项，可以手动配置",
@@ -71,7 +75,6 @@ function init(apiConfig) {
 }
 
 chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
-  console.log(apiConfig);
   if (apiConfig) init(apiConfig ? apiConfig : undefined)
 })
 

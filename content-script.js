@@ -17,11 +17,15 @@ function main() {
     if (document.getElementById("copyJs")) return
     const jsButton = getCopyButton('copyJs', "复制Js代码")
     const tsButton = getCopyButton('copyTs', '复制Ts代码')
+    const tsRequestButton = getCopyButton('copyTsRequest', '复制Ts请求声明')
+    const tsResponseButton = getCopyButton('copyTsResponse', '复制Ts回调声明')
     const titles = document.body.getElementsByClassName("interface-title")
     if (titles.length && projectRegex.test(location.href)) {
         const title = titles?.[0]
         title.appendChild(jsButton)
         title.appendChild(tsButton)
+        title.appendChild(tsRequestButton)
+        title.appendChild(tsResponseButton)
         buttonClickListen()
     }
 }
@@ -50,7 +54,7 @@ const registerGlobal = () => {
 /** 获取服务名 */
 const getServiceName = () => {
     const { href, host, protocol } = location
-    const [, projectId] = menuRegex.exec(location.href)
+    const [, projectId] = menuRegex.exec(href)
     if (!projectId) return Promise.resolve('')
     if (global.apiConfig.basepath) return Promise.resolve(global.apiConfig.basepath)
     return new Promise(async (resolve, reject) => {
@@ -70,13 +74,14 @@ async function buttonClickListen() {
     const { JsApiItem, TsApiItem } = await import(src);
     const copyJsButton = document.getElementById("copyJs");
     const copyTsButton = document.getElementById("copyTs");
+    const copyTsRequestButton = document.getElementById("copyTsRequest");
+    const copyTsResponseButton = document.getElementById("copyTsResponse");
     const prefix = await getServiceName()
     copyJsButton.addEventListener('click', async () => {
         try {
             const data = await getApiItem()
             const JsItem = new JsApiItem(data, { prefix })
-            const copyText = orangeCopyText(JsItem)
-            console.log(copyText);
+            const copyText = await orangeCopyText(JsItem)
             await copyToClipboard(copyText)
             copyJsButton.innerText = '复制JS代码成功'
         } catch (error) {
@@ -87,10 +92,39 @@ async function buttonClickListen() {
         try {
             const data = await getApiItem()
             const TsItem = new TsApiItem(data, { prefix })
-            const copyText = orangeCopyText(TsItem)
-            console.log(copyText);
+            const copyText = await orangeCopyText(TsItem)
             await copyToClipboard(copyText)
             copyTsButton.innerText = '复制Ts代码成功'
+        } catch (error) {
+            alert(String(error))
+        }
+    })
+    copyTsRequestButton.addEventListener('click', async () => {
+        try {
+            const data = await getApiItem()
+            const TsItem = new TsApiItem(data, { prefix })
+            let text = ''
+            TsItem.paramsArr.map(item => {
+                if (item.typeString) text += `${item.typeString}\n`
+            })
+            const copyText = await format(text)
+            await copyToClipboard(copyText)
+            copyTsRequestButton.innerText = '复制请求成功'
+        } catch (error) {
+            alert(String(error))
+        }
+    })
+    copyTsResponseButton.addEventListener('click', async () => {
+        try {
+            const data = await getApiItem()
+            const TsItem = new TsApiItem(data, { prefix })
+            if (TsItem.returnData.typeString) {
+                const copyText = await format(TsItem.returnData.typeString)
+                await copyToClipboard(copyText)
+                copyTsResponseButton.innerText = '复制回调成功'
+            } else {
+                copyTsResponseButton.innerText = '请求无返回'
+            }
         } catch (error) {
             alert(String(error))
         }
@@ -115,17 +149,31 @@ function getApiItem() {
 }
 
 /** 获取api文本 */
-function orangeCopyText(item) {
+async function orangeCopyText(item) {
     let text = ''
-    text += `${item.methodNote}\n${item.methodStr}`
+    text += `${item.methodNote}\n${item.methodStr}\n`
     if (!global.apiConfig.isNeedType) return text
     item.paramsArr.map(item => {
-        if (item.typeString) text += item.typeString
+        if (item.typeString) text += `${item.typeString}\n`
     })
     if (item.returnData.typeString) text += item.returnData.typeString
-    return text
+    return format(text)
 }
 
+/** 格式化代码 */
+async function format(text) {
+    const src = chrome.runtime.getURL("prettier.mjs");
+    const TsSrc = chrome.runtime.getURL("ts.mjs");
+    const prettier = await import(src)
+    const TsPlugin = await import(TsSrc)
+    return prettier.default.format(text, {
+        parser: 'typescript',
+        plugins: TsPlugin,
+        semi: false,
+        printWidth: 150,
+        tabWidth: 4
+    })
+}
 
 
 /** 复制文本到粘贴板 */

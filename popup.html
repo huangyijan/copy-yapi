@@ -3,18 +3,19 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
   <link rel="stylesheet" href="popup.css">
-
+  <script src="./jsoneditor.min.js"></script>
 </head>
 
 <body>
   <div class="popup">
-    <!-- <textarea id="configJson"></textarea> -->
     <div id='editor_config'></div>
-    <button id="submit">保存配置</button>
+    <button id="submit" class="btn btn-sm btn-primary">保存配置</button>
   </div>
 
-  <script src="./jsoneditor.min.js"></script>
   <script src="./popup.js"></script>
 </body>
 
