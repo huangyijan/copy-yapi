@@ -666,7 +666,7 @@ var TsApiItem = /** @class */ (function (_super) {
     };
     TsApiItem.prototype.setMethodNote = function () {
         var item = this.apiItem;
-        this.methodNote = "/**\n        * @description ".concat(item.title, "\n        * @apiUpdateTime ").concat(getUpdateTime(item.up_time), "\n        * @link ").concat(getApiLinkAddress(item.project_id, item._id), "\n        */");
+        this.methodNote = "/**\n * @description ".concat(item.title, "\n * @apiUpdateTime ").concat(getUpdateTime(item.up_time), "\n * @link ").concat(getApiLinkAddress(item.project_id, item._id), "\n */");
     };
     TsApiItem.prototype.setMethodStr = function () {
         var item = this.apiItem;

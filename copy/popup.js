@@ -1,5 +1,6 @@
 /** 默认配置 */
 const defaultConfig = {
+  "showCode": true,
   "isNeedType": false,
   "isNeedAxiosType": false,
   "dataParseName": "detailMsg",
@@ -21,8 +22,13 @@ function init(apiConfig) {
     disable_properties: true,
     schema: {
       type: "object",
-      title: "API 全局配置项",
+      title: "API 全局配置项(Ps: 修改要保存生效)",
       properties: {
+        showCode: {
+          title: "是否展示复制文本",
+          type: "boolean",
+          format: "checkbox"
+        },
         isNeedType: {
           title: "isNeedType-是否需要参数类型补充",
           type: "boolean",
@@ -73,10 +79,15 @@ function init(apiConfig) {
     },
     startval: defaultConfig
   });
+
+  editor.on('change', () => {
+    const apiConfig = editor.getValue()
+    chrome.storage.sync.set({ apiConfig })
+  });
 }
 
 chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
- init(apiConfig ? apiConfig : undefined)
+  init(apiConfig ? apiConfig : undefined)
 })
 
 const submitButton = document.getElementById('submit')
@@ -84,13 +95,16 @@ submitButton.addEventListener('click', function () {
   const apiConfig = editor.getValue()
   chrome.storage.sync.set({ apiConfig }, async function () {
     submitButton.innerText = '保存成功，刷新当前页面使配置生效'
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: () => {
-        location.reload()
-      },
-    });
+    reload()
   })
 });
+async function reload() {
+  let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    function: () => {
+      location.reload()
+    },
+  });
+}

@@ -15,7 +15,7 @@
     }
   ],
   "web_accessible_resources": [{
-    "resources": ["copy/aomi-yapi.js", "copy/prettier.mjs", "copy/ts.mjs"],
+    "resources": ["copy/aomi-yapi.js", "copy/prettier.mjs", "copy/ts.mjs", "copy/custom.js"],
     "matches": ["*://*/*"]
   }],
   "action": {

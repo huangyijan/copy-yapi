@@ -28,6 +28,7 @@ function main() {
             title.appendChild(tsRequestButton)
             title.appendChild(tsResponseButton)
             buttonClickListen()
+            insertCustomScript()
         } else {
             setTimeout(() => {
                 main()
@@ -36,11 +37,21 @@ function main() {
     }
 }
 
+function insertCustomScript() {
+    var s = document.createElement('script')
+    s.src = chrome.runtime.getURL("copy/custom.js")
+    document.head.appendChild(s)
+    s.onload = function () {
+        s.remove()
+    }
+}
+
 /** 注册全局变量 */
 const registerGlobal = () => {
 
     /** 默认配置 */
     const defaultConfig = {
+        "showCode": true,
         "isNeedType": false,
         "isNeedAxiosType": false,
         "dataParseName": "detailMsg",
@@ -51,8 +62,8 @@ const registerGlobal = () => {
     }
     chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
         const { host, protocol } = window.location
-        const config = apiConfig || defaultConfig
-        window.global = { apiConfig: Object.assign({}, config, { host, protocol }) }
+        Object.assign(defaultConfig, apiConfig, { host, protocol })
+        window.global = { apiConfig: defaultConfig }
     })
 
 }
@@ -184,7 +195,7 @@ async function format(text) {
 
 /** 复制文本到粘贴板 */
 function copyToClipboard(textToCopy) {
-    showCode(textToCopy)
+    if (global.apiConfig.showCode) showCode(textToCopy)
     if (navigator.clipboard && window.isSecureContext) {
         return navigator.clipboard.writeText(textToCopy)
     } else {
@@ -204,14 +215,27 @@ function copyToClipboard(textToCopy) {
 }
 
 function showCode(code = '') {
+
+    const editCodeDom = document.querySelector('#codeEditorId')
+    if (editCodeDom) editCodeDom.style.display = 'none'
+
+    const editButtonDom = document.querySelector("#editButtonId")
+    if (editButtonDom) editButtonDom.style.display = 'block'
+
     const codeIdDom = document.querySelector('#codeWrap')
-    if (codeIdDom) return codeIdDom.innerText = code
+    const showWrapDom = document.querySelector('#showWrap')
+    if (codeIdDom) {
+        showWrapDom.style.display = 'block'
+        return codeIdDom.innerText = code
+    }
+
     const padDom = document.querySelector('.panel-view')
     const childDom = document.querySelector('.ant-row')
     const codeWrap = document.createElement('div')
     const preDom = document.createElement('pre')
     const codeDom = document.createElement('code')
     codeWrap.setAttribute('class', 'tui-editor-contents')
+    codeWrap.setAttribute('id', 'showWrap')
     codeWrap.setAttribute('style', 'margin: 0px; padding: 0px 20px; float: none;')
     codeDom.setAttribute('id', 'codeWrap')
     codeDom.innerText = code
