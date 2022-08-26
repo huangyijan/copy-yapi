@@ -10,7 +10,7 @@ function getCopyButton(id, text, backgroundColor) {
     button.setAttribute("class", "ant-btn btn-filter ant-btn-primary")
     button.setAttribute("id", id)
     button.style.marginLeft = "10px"
-    if(backgroundColor) {
+    if (backgroundColor) {
         button.style.backgroundColor = backgroundColor
         button.style.borderColor = backgroundColor
     }
@@ -54,7 +54,6 @@ function insertCustomScript() {
 
 /** 注册全局变量 */
 const registerGlobal = () => {
-
     /** 默认配置 */
     const defaultConfig = {
         "showCode": true,
@@ -66,11 +65,16 @@ const registerGlobal = () => {
         "basepath": "",
         "customParams": []
     }
-    chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
-        const { host, protocol } = window.location
-        Object.assign(defaultConfig, apiConfig, { host, protocol })
-        window.global = { apiConfig: defaultConfig }
+    return new Promise(resolve => {
+        chrome.storage.sync.get(['apiConfig'], function ({ apiConfig }) {
+            const { host, protocol } = window.location
+            Object.assign(defaultConfig, apiConfig, { host, protocol })
+            window.global = { apiConfig: defaultConfig }
+            resolve()
+        })
     })
+
+
 
 }
 
