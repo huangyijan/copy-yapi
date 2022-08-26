@@ -5,4 +5,5 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
       url: changeInfo.url
     })
   }
+  return true
 });

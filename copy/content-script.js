@@ -1,6 +1,8 @@
 const projectRegex = /\/interface\/api\/(\d+)/
 const menuRegex = /\/project\/(\d+)\/interface\/api\/\d+$/
 
+
+
 /** 插入按钮 */
 function getCopyButton(id, text) {
     const button = document.createElement('button')
@@ -251,6 +253,7 @@ document.onreadystatechange = () => {
         main()
     }
 }
+
 
 chrome.runtime.onMessage.addListener((request) => {
     if (request.message === 'urlChange') {

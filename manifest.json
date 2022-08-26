@@ -9,8 +9,8 @@
   "permissions": ["storage", "activeTab", "scripting", "tabs", "management"],
   "content_scripts": [
     {
-      "matches": ["*://*/project/*/interface/api/*"],
-      "js": ["content-script.js"],
+      "matches": ["*://*/project/*/interface/api/*", "*://*/group/*"],
+      "js": ["copy/content-script.js"],
       "run_at": "document_end"
     }
   ],

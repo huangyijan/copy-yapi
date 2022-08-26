@@ -2,9 +2,6 @@
 
 yapi 网站的 chrome 插件，方便复制单个接口代码。支持JS/TS、Ts的请求声明和回调声明
 
-
-
-
 ### Api配置(仅供参考，详细请看下方参考地址)
 
 配置参考: [https://github.com/huangyijan/yapi-codegen](https://github.com/huangyijan/yapi-codegen)
@@ -34,7 +31,7 @@ $ git clone --branch master --depth=1 http://github.miguatech.com/huangyijian/co
 
 3、chrome 进入扩展管理，点击加载已解压的扩展程序，选择刚刚clone的文件夹，选择加载。
 
-4、进入接口界面，看到代码复制按钮（点击插件图标，配置自定义选项）,完毕。
+4、进入接口界面, 看到代码复制按钮（点击插件图标，配置自定义选项, 完毕。
 
 ![you need proxy to see the image](./images/yapiPage.jpg)
 ![you need proxy to see the image](./images/popup.jpg)
