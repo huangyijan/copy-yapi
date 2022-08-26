@@ -15,11 +15,11 @@ function getCopyButton(id, text) {
 /** 入口库方法 */
 function main() {
     if (document.getElementById("copyJs")) return
-    const jsButton = getCopyButton('copyJs', "复制Js代码")
-    const tsButton = getCopyButton('copyTs', '复制Ts代码')
-    const tsRequestButton = getCopyButton('copyTsRequest', '复制Ts请求声明')
-    const tsResponseButton = getCopyButton('copyTsResponse', '复制Ts回调声明')
     if (projectRegex.test(location.href)) {
+        const jsButton = getCopyButton('copyJs', "复制Js代码")
+        const tsButton = getCopyButton('copyTs', '复制Ts代码')
+        const tsRequestButton = getCopyButton('copyTsRequest', '复制Ts请求声明')
+        const tsResponseButton = getCopyButton('copyTsResponse', '复制Ts回调声明')
         const titles = document.body.getElementsByClassName("interface-title")
         if (titles.length) {
             const title = titles?.[0]
@@ -87,7 +87,7 @@ const getServiceName = () => {
 /** 监听按钮点击 */
 async function buttonClickListen() {
     registerGlobal()
-    const src = chrome.runtime.getURL("copy/aomi-yapi.js");
+    const src = chrome.runtime.getURL("copy/yapi.js");
     const { JsApiItem, TsApiItem } = await import(src);
     const copyJsButton = document.getElementById("copyJs");
     const copyTsButton = document.getElementById("copyTs");
