@@ -4,12 +4,16 @@ const menuRegex = /\/project\/(\d+)\/interface\/api\/\d+$/
 
 
 /** 插入按钮 */
-function getCopyButton(id, text) {
+function getCopyButton(id, text, backgroundColor) {
     const button = document.createElement('button')
     button.innerText = text
     button.setAttribute("class", "ant-btn btn-filter ant-btn-primary")
     button.setAttribute("id", id)
     button.style.marginLeft = "10px"
+    if(backgroundColor) {
+        button.style.backgroundColor = backgroundColor
+        button.style.borderColor = backgroundColor
+    }
     button.style.float = "right"
     return button
 }
@@ -18,8 +22,8 @@ function getCopyButton(id, text) {
 function main() {
     if (document.getElementById("copyJs")) return
     if (projectRegex.test(location.href)) {
-        const jsButton = getCopyButton('copyJs', "复制Js代码")
-        const tsButton = getCopyButton('copyTs', '复制Ts代码')
+        const jsButton = getCopyButton('copyJs', "复制Js代码", "#d48806")
+        const tsButton = getCopyButton('copyTs', '复制Ts代码', "#0050b3")
         const tsRequestButton = getCopyButton('copyTsRequest', '复制Ts请求声明')
         const tsResponseButton = getCopyButton('copyTsResponse', '复制Ts回调声明')
         const titles = document.body.getElementsByClassName("interface-title")
