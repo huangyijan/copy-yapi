@@ -30,7 +30,7 @@ $ git clone --branch master --depth=1 http://github.miguatech.com/huangyijian/co
 
 ```
 
-2、目前扩展配置的正则域名为：*://*/project/*/interface/api/* 。如果yapi服务搭建在二级目录上，请手动更改正则（文件位置： manifest.json）。
+2、目前扩展配置的正则域名为：*://\*/project/\*/interface/api/\* 。如果yapi服务搭建在二级目录上，请手动更改正则（文件位置： manifest.json）。
 
 3、chrome 进入扩展管理，点击加载已解压的扩展程序，选择刚刚clone的文件夹，选择加载。
 
