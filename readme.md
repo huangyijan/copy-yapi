@@ -5,7 +5,7 @@ yapi 网站的 chrome 插件，方便复制单个接口代码。支持JS/TS、Ts
 
 
 
-### Api配置(仅供参考，详细请看上方参考地址)
+### Api配置(仅供参考，详细请看下方参考地址)
 
 配置参考: [https://github.com/huangyijan/yapi-codegen](https://github.com/huangyijan/yapi-codegen)
 
