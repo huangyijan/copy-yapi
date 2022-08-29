@@ -1,6 +1,7 @@
 const projectRegex = /\/interface\/api\/(\d+)/
 const menuRegex = /\/project\/(\d+)\/interface\/api\/\d+$/
 
+let contentTypeId = 'copyJs'
 
 
 /** 插入按钮 */
@@ -20,6 +21,7 @@ function getCopyButton(id, text, backgroundColor) {
 
 /** 入口库方法 */
 function main() {
+    onUrlChange()
     if (document.getElementById("copyJs")) return
     if (projectRegex.test(location.href)) {
         const jsButton = getCopyButton('copyJs', "复制Js代码", "#d48806")
@@ -40,6 +42,15 @@ function main() {
                 main()
             }, 1000);
         }
+    }
+}
+
+/** 动态检测代码变动 */
+function onUrlChange() {
+    const codeWrap = document.getElementById("codeWrap")
+    const currentButton = document.getElementById(contentTypeId)
+    if (codeWrap && currentButton) {
+        currentButton.click()
     }
 }
 
@@ -105,6 +116,7 @@ async function buttonClickListen() {
     const copyTsResponseButton = document.getElementById("copyTsResponse");
     const prefix = await getServiceName()
     copyJsButton.addEventListener('click', async () => {
+        contentTypeId = "copyJs"
         try {
             const data = await getApiItem()
             const JsItem = new JsApiItem(data, { prefix })
@@ -116,6 +128,7 @@ async function buttonClickListen() {
         }
     })
     copyTsButton.addEventListener('click', async () => {
+        contentTypeId = "copyTs"
         try {
             const data = await getApiItem()
             const TsItem = new TsApiItem(data, { prefix })
@@ -128,6 +141,7 @@ async function buttonClickListen() {
     })
     copyTsRequestButton.addEventListener('click', async () => {
         try {
+            contentTypeId = "copyTsRequest"
             const data = await getApiItem()
             const TsItem = new TsApiItem(data, { prefix })
             let text = ''
@@ -143,6 +157,7 @@ async function buttonClickListen() {
     })
     copyTsResponseButton.addEventListener('click', async () => {
         try {
+            contentTypeId = "copyTsResponse"
             const data = await getApiItem()
             const TsItem = new TsApiItem(data, { prefix })
             if (TsItem.returnData.typeString) {
@@ -264,7 +279,8 @@ document.onreadystatechange = () => {
 
 
 chrome.runtime.onMessage.addListener((request) => {
-    if (request.message === 'urlChange') {
+    const { type } = request.message
+    if (type && type === 'urlChange') {
         main()
     }
 });
