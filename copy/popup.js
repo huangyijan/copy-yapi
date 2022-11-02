@@ -3,6 +3,7 @@ const defaultConfig = {
   "showCode": true,
   "isNeedType": false,
   "isNeedAxiosType": false,
+  "isNeedSecondType": false,
   "dataParseName": "detailMsg",
   "outputStyle": "nameExport",
   "axiosName": "fetch",
@@ -31,6 +32,11 @@ function init(apiConfig) {
         },
         isNeedType: {
           title: "isNeedType-是否需要参数类型补充",
+          type: "boolean",
+          format: "checkbox"
+        },
+        isNeedSecondType: {
+          title: "isNeedSecondType-嵌套对象拆分",
           type: "boolean",
           format: "checkbox"
         },
